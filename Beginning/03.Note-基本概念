@@ -1,0 +1,83 @@
+松散变量类型
+1.可以保存任何类型的数据
+2.var 标识符
+
+数据类型
+1.Undefined:使用var声明变量但未对其进行初始化时,此变量类型就是Undefined
+    var message;
+    alert(typeof message) //"undefined"
+
+2.Null:
+    var car = null;
+    alert(typeof car); //"object"
+
+3.Boolean 
+    true/false
+    可以对任何变量调用转型函数 Bollean()
+
+4.Number
+    整数
+        var intNum = 50;  //整数 10 进制
+        var octalNum = 070; //整数 8 进制 56
+        var hexNum ＝ 0xA; //整数 16进制 10
+        存在正零(+0)和负零(-0),正零和负零是相等的
+    浮点数
+        var floatNum = 1.0; 
+    科学计数法
+        var floarNum = 2.4e5; // 240000
+    无穷
+        isFinite()
+    非数值
+        isNaN()
+
+5.String
+    不可变
+        ex:
+            var lang = "Java"; //创建 lang
+            lang = lang + "Script"; //创建一个新字符串, 填充 "Java" + "Script", 销毁 "Java" + "Script"
+
+    toString()
+
+6.Object
+    Constructor 构造函数
+    hasOwnProperty(propertyName) 用于检查给定的属性在当前的对象实例中
+    isProtoTypeOf(Object) 用于检查传入的对虾功能是否是另一个对象的原型
+    propertyisEnumerable(propertyName) 检查给定的对象是否能用 for-in 语句遍历
+    toLocalString()
+    toString()
+    valueOf()
+
+操作符
+语句
+    with语句
+        ex:
+            var qs = location.search.substring(1);
+            var hostName = location.hostname;
+            var url = location.herf;
+            等价于
+            with(location)
+            {
+                var qs = search.substring(1);
+                var hostName = hostname;
+                var url = herf;
+            }
+
+编程规范
+1.显式地初始化变量以保证在 typeof 返回 "undefined" 时,确认该变量未被定义
+2.如果定义的变量准备在将来用于保存对象，最好将该变量初始化为 null
+3.不要测试浮点数值
+    ex:
+        var a = 0.1;
+        var b = 0.2;
+        if (a + b == 0.3) //不成立
+        {
+            alert("OK");
+        }
+4.parseInt() 指定基数
+    ex:
+        var num1 = parseInt("10",2);    //2
+        var num2 = parseInt("10",10);   //10
+        var num3 = parseInt("10",8);    //8
+        var num4 = parseInt("10",16);   //16
+  parseFloat() 始终会将16进制数转换为 0
+
