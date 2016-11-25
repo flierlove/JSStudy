@@ -1,0 +1,41 @@
+1.Object实例创建
+    ex:
+        对象定义
+        var person = new Object();
+        person.name = "KK";
+        person.age = 20;
+        对象字面量
+        var person = {
+            name:"KK",
+            "age":20
+        }
+
+        function displayInfo(args)
+        {
+            var output = "";
+            if(typeof args.name == "string")
+            {
+                output += "Name: " + args.name + "\n";
+            }
+
+            if (typeof args.age == "number")
+            {
+                output += "Age: " + args.age + "\n";
+            }
+
+            alert(output);
+        }//"Name KK
+         // Age 20"
+
+        displayInfo({
+            name: "KK",
+            age: 20
+        });
+
+        displayInfo({
+            name: "KK"
+        });// "Name KK"
+
+    person["name"]//"KK"
+    person.name//"KK"-----------建议用法
+2.数组类型
