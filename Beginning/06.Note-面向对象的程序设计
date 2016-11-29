@@ -1,0 +1,140 @@
+ECMA-262把对象定义为:
+    无序属性的集合, 属性可以包含基本值, 对象或者函数。
+
+1.属性类型
+    1.数据属性 包含一个数据值的位置,在这个位置可以读取和写入值。
+        数据属性特性
+            1.[[Configurable]]
+            2.[[Enumerable]]
+            3.[[Writable]]
+            4.[[Value]]
+
+            修改特性必须通过 Object.defineProperty() 方法
+            ex
+                // writable属性
+                var person = {}
+                Object.defineProperty(person, "name", {
+                    writable: false,
+                    value: "KK"
+                });
+
+                alert(person.name); // "KK"
+                person.name = "GG"; 
+                alert(person.name); // "KK"
+
+                //configurable 属性
+                var person = {};
+                Object.defineProperty(person, "name", {
+                    configurable: false,
+                    value: "KK"
+                });
+
+                alert(person.name); // "KK"
+                delete person.name;
+                alert(person.name); // "KK"
+                
+                属性更改为不可配置之后, 就只能修改 writable 属性, 修改其它属性会抛出错误
+    2.访问器属性
+        访问器属性不包含数据值, 它们包含一对 getter 和 setter 函数(两个非必需函数)
+        访问器属性特性
+            1.[[Configurable]]
+            2.[[Enumerable]]
+            3.[[Get]]
+            4.[[Set]]
+
+            访问器属性不能直接定义, 必需使用 Object.defineProperty() 来定义
+            ex
+                var book = {
+                    _year: 2005,
+                    edition: 1
+                };
+
+                Object.defineProperty(book, "year", {
+                    get: function(){
+                        return this._year;
+                    },
+                    set: function(newValue){
+                        if(newValue > 2004)
+                        {
+                            this._year = newValue;
+                            this.edition += newValue - 2004;
+                        }
+                    }
+                });
+
+                book.year = 2005;
+                alert(book.edition); // 2
+
+        可通过 Object.defineProperties() 同时定义多个属性
+        可通过 Object.getOwnPropertyDescriptor() 方法取得给定属性的描述符。
+            ex
+                var book = {};
+                Object.defineProperties(book,{
+                    _year: {
+                        value: 2004
+                    }
+
+                    edition: {
+                        value: 1
+                    }
+
+                    year: {
+                        get: function()
+                        {
+                            return this._year;
+                        }
+                        set: function(newValue)
+                        {
+                            if(newValue > 2004)
+                            {
+                                this._year = newValue;
+                                this.edition += newValue - 2004;
+                            }
+                        }
+                    }
+                });
+
+                var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+                alert(descriptor.value); //2004
+                alert(descriptor.configurable); //false
+                alert(typeof descriptor.get); //"undefined"
+
+                var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+                alert(descriptor.value); // "undefined"
+                alert(descriptor.enumerable); //false
+                alert(typeof descriptor.get); //function
+2.创建对象
+    1.工厂模式
+        ex
+            function createPerson(name, age, job)
+            {
+                var o = new Object();
+                o.name = name;
+                o.age = age;
+                o.job = job;
+                o.sayName = function(){
+                    alert(this.name);
+                }
+                return o;
+            }
+
+            var person1 = createPerson("KK", 20, "Sowftware Engineer");
+    2.构造函数模式
+        ex
+            function Person(name, age, job){
+                this.name = name;
+                this.age = age;
+                this.job = job;
+                this.sayName = function(){
+                    alert(this.name);
+                }
+            }
+
+            var person2 = new Person("GG", 45, "Doctor");
+                
+        构造函数始终都应该以一个大写字母开头, 非构造函数应该以一个小写字母开头。
+        person2 有一个构造函数属性 constructor, 该属性指向 Person
+        alert(person2.constructor == Person); //true
+
+
+        
