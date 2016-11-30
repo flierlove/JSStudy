@@ -1,0 +1,57 @@
+函数定义方式
+    1.函数声明
+        ex
+            function sayHi(){
+                alert("Hi");
+            }
+    2.函数表达式
+        ex
+            var sayHi = function(){
+                alert("Hi");
+            };
+    3.匿名函数
+
+1.递归
+    递归函数是在一个函数通过名字调用自身的情况下构成的
+    ex 
+        //乘阶函数
+        function factorial(num){
+            if (num <= 1)
+            {
+                return num;
+            }
+            else
+            {
+                return num * factorial(num - 1);
+            }
+        }
+
+        var anotherFactorial = factorial;
+        fatorial = null;
+        alert(anotherFactorial(4)); //error
+
+        //解决办法
+        function factorial(num){
+            if (num <= 1)
+            {
+                return num;
+            }
+            else
+            {
+                //通过 arguments.callee 代替函数名可以确保调用函数本身
+                return num * arguments.callee(num - 1);
+            }
+        }
+        //严格模式下可以通过使用命名函数表达式来达成相同的结果
+        function factorial = (function f(num){
+            if (num <= 1)
+            {
+                return num;
+            }
+            else
+            {
+                return num * f(num - 1);
+            }
+        });
+2.闭包
+    闭包是指有权访问另一个函数作用域中的变量的函数。

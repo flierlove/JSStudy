@@ -135,6 +135,364 @@ ECMA-262把对象定义为:
         构造函数始终都应该以一个大写字母开头, 非构造函数应该以一个小写字母开头。
         person2 有一个构造函数属性 constructor, 该属性指向 Person
         alert(person2.constructor == Person); //true
+    3.原型模式
+        ex
+            function Person(){}
+            Person.prototype.name = "KK";
+            Person.prototype.age = 25;
+            Person.prototype.job = "Doctor";
+            Person.prototype.sayName = function(){
+                alert(this.name);
+            };
 
+            var person1 = new Person();
+            person1.sayName(); //"KK"
 
-        
+            var person2 = new Person();
+            person2.sayName(); //"KK"
+
+            alert(person1.sayName == person2.sayName); //true
+
+            原型对象
+                function -> prototype -> constructor
+                    ^                          |         
+                    |__________________________|
+
+            function Person(){
+            }
+            Person.prototype.name = "KK";
+            Person.prototype.age = 25;
+            Person.prototype.job = "Doctor";
+            Person.prototype.sayName = function(){
+                alert(this.name);
+            };
+
+            var person1 = new Person();
+            var person2 = new Person();
+            person1.name = "GG";
+            alert(person1.name); //GG
+            alert(person2.name); //KK
+            
+            当为对象实例添加一个属性的时候, 这个属性就会屏蔽原型对象中保存的同名属性.
+            delete 操作符可以完全删除实例属性, 从而重新能够访问到原型中的属性
+
+            delete person1.name;
+            alert(person1.name); //KK
+
+            使用 hasOwnProperty() 可以检测一个属性时存在于实例中还是原型中
+            in操作符会再通过对象能够访问给定属性时返回 true, 无论给定对象的该属性是通过实例还是通过原型访问
+             
+            var person1 = new Person();
+
+            alert(person1.hasOwnProperty("name"); //false
+            alert("name" in person1); //true
+            person1.name = "GG";
+            alert(person1.hasOwnProperty("name"); //true
+            alert("name" in person1); //true
+
+            IE的早期版本存在一个 屏蔽不可枚举属性的实力属性不会出现在for-in循环中
+            var o = {
+                toString: function(){
+                    return "My Object";
+                }
+            }
+
+            for(var prop in o)
+            {
+                if (prop == "toString")
+                {
+                    alert("Found toString");       //在IE中不会显示
+                }
+            }
+
+            Object.keys() //取得对象上所有可枚举的实例属性
+            ex
+                function Person(){
+                }
+                Person.prototype.name = "KK";
+                Person.prototype.age = 25;
+                Person.prototype.job = "Doctor";
+                Person.prototype.sayName = function(){
+                    alert(this.name);
+                };
+
+                var keys = Object.keys(Person.prototype);
+                alert(keys); //name, age, job, sayName
+
+                var p1 = new Person();
+                p1.name = "GG";
+                p1.age = 23;
+                var p1keys = Object.keys(p1);
+                alert(p1keys); //name, age
+
+            Object.getOwnPropertyNames() //取得所有实例属性(无论其是否可枚举)
+            ex
+                var keys = Object.getOwnPropertyNames(Person.prototype);
+                alert(keys); //constructor(不可枚举), name, age, job, sayName
+
+            更简单的原型语法
+            ex
+                function Person(){}
+
+                Person.prototype = {
+                    name: "KK",
+                    age: 23,
+                    job: "Doctor",
+                    sayName: function(){
+                        alert(this.name);
+                    }
+                }
+            Person.prototype被设置为以对象字面量形式创建的新对象, 所以 constructor 属性不再指向 Person 而是指向 Object 构造函数
+            如果需要 constructor 的值
+            ex
+                function Person(){}
+
+                Person.prototype = {
+                    constructor: Person,
+                     //此时 constructor 的[[Enumerable]] 属性会被设置为 true, 可以使用 
+                     //Object.defineProperty(Person.prototype, "constructor")
+                     //{
+                     //   enumerable: false,
+                     //   value: Person
+                     //}
+                     //重设构造函数
+
+                    name: "KK",
+                    age: 23,
+                    job: "Doctor",
+                    sayName: function(){
+                        alert(this.name);
+                    }
+                }
+
+            原型模式中的引用类型的值会被所有实例变量共有, 可以通过组合使用 构造函数模式 和 原型模式 来解决这一问题
+
+            动态原型模式
+            ex
+                function Person(name, age, job){
+
+                    //属性
+                    this.name = name;
+                    this.job = job;
+                    this.age = age;
+
+                    //方法
+                    if (typeof this.sayName != "function")
+                    {
+                        this.prototype,sayName = function(){
+                            alert(this.name);
+                        }
+                    }
+                }
+            此处只会在 sayName 方法不存在的情况下将其添加到原型中
+            使用动态原型模式时不能使用对象字面量重写原型, 因为会切断现有实例与新原型之间的联系
+            
+            寄生构造函数模式
+            ex
+                function SpecialArray(){
+                    var values = new Array();
+                    values.push.apply(values, arguments);
+                    values.toPipedString = function(){
+                        return this.join("|");
+                    }
+
+                    return values;
+                }
+
+                var colors = new SpecialArray("red", "blue", "green");
+                alert(colors.toPipedString()); // red|blue|green
+
+            稳妥构造函数模式
+            ex
+                function Person(name, age, job){
+                    var o = new Object();
+                    o.sayName = function(){
+                        alert(name);
+                    }
+                    return o;
+                }
+            此对象中, 除了使用 sayName 方法之外, 没有其它办法访问 name 的值, 故其中保存的是稳妥的对象
+
+            instanceof 操作符对寄生构造函数和稳妥构造函数创建的对象没有意义, 因为其创建的对象与其构造函数之间没有关系
+3.继承
+    接口继承, 实现继承
+    ECMAScript 由于函数没有签名, 所以只支持实现继承
+    原型链
+    ex
+        function SuperType(){
+            this.property = true;
+        }
+
+        SuperType.prototype.getSuperValue = function(){
+            return this.property;
+        }
+
+        function SubType(){
+            this.subProperty = false;
+        }
+
+        SubType.prototype = new SuperType();
+
+        SubType.prototype.getSubValue = function(){
+            return this.subProperty;
+        }
+
+        var instance = new SubType();
+        alert(instance.getSuperValue()); //true
+
+    1.所有对象默认的原型是 Object
+    2.确定原型和实例的关系
+        ex
+            instanceof
+                alert(instance instanceof Object); //true
+                alert(instance instanceof SuperType); //true
+                alert(instance instanceof SubType); //true
+            isProtoTypeOf()
+                alert(Object.prototype.isProtoTypeOf(instance)); //true
+                alert(SuperType.prototype.isProtoTypeOf(instance)); //true
+                alert(SubType.prototype.isProtoTypeOf(instanceof)); //true
+    3.谨慎的定义方法 给原型添加方法的代码一定要放在替换原型的语句之后
+        ex
+            function SuperType(){
+                this.property = true;
+            }
+
+            SuperType.prototype.getSuperValue = function(){
+                return this.property;
+            }
+
+            function SubType(){
+                this.property = false;
+            }
+
+            //SuperType 的实例替换 SubType 的原型
+            SubType.prototype = new SuperType();
+            //添加新方法
+            SubType.prototype.getSubValue = function(){
+                return this.property;
+            }
+            //重写超类中的方法
+            SubType.prototype.getSuperValue = function(){
+                return false;
+            }
+
+            var instance = new SubType();
+            alert(instance.getSuperValue); //false
+
+            通过原型链实现继承时, 不能使用对象字面量创建原型的方法, 因为这样做会切断原型链
+            原型链最主要的问题来自包含引用类型值的原型, 因为包含引用变量的原型中的引用变量会被所有实例共享
+            ex
+                function SuperType(){
+                    this.colors = ["red", "blue"];
+                }
+                function SubType(){}
+                SubType.prototype = new SuperType();
+                var instance1 = new SubType();
+                instance1.colors.push("black");
+                alert(instance1.colors); //red,blue,black
+                var instance2 = new SubType();
+                alert(instance2.colors); //red,blue,black
+            原型链的另一个问题是:在创建子类型的实例时, 不能向超类的构造函数中传递参数, 实际上就是无法在不影响所有对象实例的情况下, 给超类的构造函数传递参数
+            借用构造函数(伪造对象, 经典继承)
+                ex
+                    function SuperType(){
+                        this.colors = ["red", "blue"];
+                    }
+
+                    function SubType(){
+                        //继承了 SuperType
+                        SuperType.call(this);
+                    }
+
+                    var instance1 = new SubType();
+                    instance1.colors.push("green");
+                    alert(instance1.colors); //red,blue,green
+
+                    var instance2 = new SubType();
+                    alert(instance2.colors); //red,blue
+            组合继承(伪经典继承)
+                ex
+                    function SuperType(name){
+                        this.name = name;
+                        this.colors = ["red","blue"];
+                    }
+
+                    SuperType.prototype.sayName = function(){
+                        alert(this.name);
+                    };
+
+                    function SubType(name, age){
+                        SuperType.call(this, name);
+                        this.age = age;
+                    }
+
+                    SubType.prototype = new SuperType();
+                    SubType.prototype.sayAge = function(){
+                        alert(this.age);
+                    };
+
+                    var instance1 = new SubType("KK", 23);
+                    instance1.colors.push("green");
+                    alert(instance1.colors); //red,blue,green
+                    instance1.sayName(); //KK
+                    instance1.sayAge(); //23
+
+                    var instance2 = new SubType("GG", 25);
+                    alert(instance2.colors); //red,blue
+                    instance2.sayName(); //GG
+                    instance2.sayAge(); //25
+            原型式继承
+                ex
+                    function object(o)
+                    {
+                        function F(){}
+                        F.prototype = o;
+                        return new F();
+                    }
+
+                    var person = {
+                        name: "KK",
+                        friends: ["GG"]
+                    }
+
+                    var anotherPerson = object(person);
+                    anotherPerson.name = "AA";
+                    anotherPerson.friends.push("BB");
+
+                    var yetAnotherPerson = object(person);
+                    yetAnotherPerson.name = "CC";
+                    yetAnotherPerson.friends.push("DD");
+
+                    alert(person.friends); //GG,BB,DD
+
+                可以简便的创建一个与所需要的对象类似的对象, 包含引用值的属性始终会共享相应的值
+
+            寄生式继承(类似 OC 中的 categary)
+            寄生组合式继承
+                通过借用构造函数来继承属性, 通过原型链的的混成形势来继承方法。
+                这样就不必为了指定子类型的原型而调用超类型的构造函数, 本质上就是实用寄生式继承来继承超类的原型, 然后再指定给自类型的原型
+                ex
+                    function inheritPrototype(subType, superType){
+                        var prototype = object(superType.prototype);//创建对象
+                        prototype.constructor = subType;//增强对象
+                        subType.prototype = prototype;//指定对象
+                    }
+
+                    function SuperType(name){
+                        this.name = name;
+                        this.colors = ["red", "blue"];
+                    }
+                    SuperType.prototype.sayName = function(){
+                        alert(this.name);
+                    }
+                    function SubType(name, age){
+                        SuperType.call(this, name);
+                        this.age = age;
+                    }
+                    inheritPrototype(SubType, SuperType);
+                    SubType.prototype.sayAge = function(){
+                        alert(this.age);
+                    }
+
+    
+
