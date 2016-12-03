@@ -1,0 +1,6 @@
+DOM 对象是针对 HTML 和 XML 文档的一个 API。DOM 描绘了一个层次化的节点树, 允许开发人员添加, 移除和修改页面的某一部分。
+1.节点层次
+    Node 类型 
+        DOM1 级定义了一个 Node 接口, 该接口将由 DOM 中的所有节点类型实现.
+        1.nodeName 和 nodeValue
+        2.节点关系

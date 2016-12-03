@@ -1,0 +1,58 @@
+1.能力检测
+    更可靠的能力检测
+    能力检测, 不是浏览器检测
+2.怪癖检测
+3.用户代理检测
+    用户代理字符串检测技术
+    1.识别呈现引擎
+    2.识别浏览器
+    3.识别平台
+    4.识别操作系统
+    5.识别移动设备
+    6.识别游戏系统
+
+    //不完整代码
+        var client = function(){
+            //引擎
+            var engine = {
+                ie: 0,
+                gecko: 0,
+                webkit: 0,
+                khtml: 0,
+                opera: 0,
+                //版本号
+                ver: null
+            };
+
+            //浏览器
+            var browser = {
+                ie: 0,
+                firefox: 0,
+                safari: 0,
+                konq: 0,
+                opera: 0,
+                chrome: 0,
+
+                ver:null
+            };
+
+            //平台,设备和操作系统
+            var system = {
+                win: false,
+                mac: false,
+                x11: false,
+
+                //移动设备
+                iphone: false,
+                ipad: false,
+                ipod: false,
+                ios: false,
+                android: false,
+                nokiaN: false,
+                winMobile: false,
+
+                //游戏系统
+                wii: false,
+                ps: false
+            };
+        }
