@@ -4,3 +4,50 @@ DOM 对象是针对 HTML 和 XML 文档的一个 API。DOM 描绘了一个层次
         DOM1 级定义了一个 Node 接口, 该接口将由 DOM 中的所有节点类型实现.
         1.nodeName 和 nodeValue
         2.节点关系
+            childNodes 属性 -> 所有子节点
+            ex
+                //遍历 nodeList 属性
+                function convertToArray(nodes){
+                    var array = null;
+                    try{
+                        array = Array.prototype.slice.call(nodes, 0);//针对非IE浏览器
+                    }
+                    catch(ex)
+                    {
+                        array = new Array();
+                        for (var i = 0 len = nodes.length; i < len; i++)
+                        {
+                            array.push(nodes[i]);
+                        } 
+                    }
+                    return array;
+                }
+            parentNode 属性 -> 父节点
+
+            通过访问节点的 previousSibling 和 nextSibling 属性可以访问同一列表(nodeList)中的其他节点。
+            hasChildNodes() 在节点包含一个或多个子节点的时候返回 true
+            ownerDocument 指向整个文档的文档节点
+        3.操作节点
+            appendChild()
+            insertBefore()
+            replaceChild()
+            removeChild()
+
+            使用 replaceChild 和 removeChild 替换和移除的节点仍然为文档所有, 只不过在文档中已经没有了自己的位置
+        4.其它方法
+            cloneNode()// 深复制, 浅复制
+            normalize()
+    Document 类型
+        JS中通过 Document 类型表示文档。在浏览器中, document 对象是 HTMLDocument 的一个实例, 表示整个HTML页面。
+        1.文档的子节点<测试demo>
+        2.文档信息
+            document.URL
+            document.domain
+            document.referrer
+        3.查找元素
+            document.getElementById()
+            document.getElementByTagName()
+            document.getElementByName()//只有 HTMLDocument 类型才有的方法
+        4.特殊集合
+        5.DOM一致性检测
+        6.文档写入
